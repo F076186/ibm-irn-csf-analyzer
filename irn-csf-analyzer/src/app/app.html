@@ -1,0 +1,183 @@
+<!-- ═══════════════════════════════════════════════════════════
+     IRN / CSF Analyzer — IBM Technology 2026
+     ═══════════════════════════════════════════════════════════ -->
+<header class="app-header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="ibm-logo">
+        <svg width="48" height="19" viewBox="0 0 48 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0 0h4.8v19H0zM7.2 0h4.8v19H7.2zM14.4 4.75h4.8v1.9h-4.8zM14.4 9.025h4.8v1.9h-4.8zM14.4 14.25h4.8V16h-4.8z" fill="#1d4ed8"/>
+          <path d="M21.6 4.75h9.6c2.651 0 4.8 2.132 4.8 4.762 0 2.63-2.149 4.763-4.8 4.763H21.6V4.75zm4.8 1.9v5.725h4.8c1.326 0 2.4-1.28 2.4-2.862 0-1.582-1.074-2.863-2.4-2.863h-4.8z" fill="#1d4ed8"/>
+          <path d="M38.4 4.75h9.6v1.9h-9.6zM38.4 9.025h9.6v1.9h-9.6zM38.4 13.3h9.6v1.95h-9.6z" fill="#1d4ed8"/>
+        </svg>
+      </div>
+      <div class="header-titles">
+        <h1>IRN / CSF Analyzer</h1>
+        <p>Indice de Résilience Numérique · Cloud Sovereignty Framework EU</p>
+      </div>
+    </div>
+    <div class="header-badges">
+      <span class="badge badge-fr">IRN Bercy — Juillet 2025</span>
+      <span class="badge badge-eu">CSF EU v1.2.1 — Oct 2025</span>
+    </div>
+  </div>
+</header>
+
+<main class="app-main">
+
+  <!-- ── Selector Panel ─────────────────────────────────────── -->
+  <section class="selector-panel">
+    <h2>Sélectionner un Produit IBM Technology 2026</h2>
+    <p class="selector-hint">
+      Choisissez une catégorie puis un produit pour générer automatiquement son assessment IRN/CSF
+      sur les 8 dimensions de l'Indice de Résilience Numérique.
+    </p>
+
+    <div class="selector-row">
+      <!-- Category dropdown -->
+      <div class="select-group">
+        <label for="catSelect">Catégorie de produit</label>
+        <select id="catSelect" [(ngModel)]="selectedCategoryName" (change)="onCategoryChange()">
+          <option value="">-- Sélectionner une catégorie --</option>
+          <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
+        </select>
+      </div>
+
+      <!-- Product dropdown -->
+      <div class="select-group" [class.disabled]="!selectedCategoryName">
+        <label for="prodSelect">Produit</label>
+        <select id="prodSelect" [(ngModel)]="selectedProduct"
+                (change)="onProductChange()"
+                [disabled]="!selectedCategoryName"
+                [compareWith]="compareById">
+          <option [ngValue]="null">-- Sélectionner un produit --</option>
+          <option *ngFor="let p of productsInCategory" [ngValue]="p">{{ p.name }}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Product info card -->
+    <div class="product-info" *ngIf="selectedProduct">
+      <div class="product-icon">{{ selectedProduct.category[0] }}</div>
+      <div>
+        <strong>{{ selectedProduct.name }}</strong>
+        <p>{{ selectedProduct.subcategory }} · {{ selectedProduct.category }}</p>
+        <p class="product-desc">{{ selectedProduct.description }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Results ───────────────────────────────────────────── -->
+  <section class="results-panel" *ngIf="assessment">
+
+    <!-- Global score banner -->
+    <div class="global-banner" [style.border-color]="assessment.globalSeal.color">
+      <div class="global-score">
+        <div class="score-circle" [style.background-color]="assessment.globalSeal.color">
+          {{ assessment.globalScore }}
+          <span class="score-max">/4</span>
+        </div>
+        <div>
+          <div class="global-seal-code">{{ assessment.globalSeal.code }}</div>
+          <div class="global-seal-label">{{ assessment.globalSeal.label }}</div>
+        </div>
+      </div>
+      <div class="global-progress-wrap">
+        <div class="global-progress-label">Conformité IRN globale pondérée</div>
+        <div class="progress-bar">
+          <div class="progress-fill"
+               [style.width.%]="globalScorePercent"
+               [style.background-color]="assessment.globalSeal.color">
+          </div>
+        </div>
+        <div class="progress-pct">{{ globalScorePercent }}%</div>
+      </div>
+      <div class="global-product-name">
+        <strong>{{ assessment.productName }}</strong>
+        <span>{{ assessment.category }}</span>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <button [class.active]="activeTab === 'chart'" (click)="activeTab = 'chart'">
+        🕸 Spider Chart IRN
+      </button>
+      <button [class.active]="activeTab === 'table'" (click)="activeTab = 'table'">
+        📊 Détail des Dimensions
+      </button>
+    </div>
+
+    <!-- Tab: Spider Chart -->
+    <div class="tab-content" *ngIf="activeTab === 'chart'">
+      <div class="chart-layout">
+        <div class="chart-area">
+          <div class="chart-title">
+            <strong>Spider Chart IRN</strong> —
+            <span>{{ assessment.productName }}</span>
+          </div>
+          <app-spider-chart [assessment]="assessment"></app-spider-chart>
+          <div class="chart-footnote">
+            Les 8 dimensions sont pondérées selon le Cloud Sovereignty Framework EU v1.2.1.<br>
+            Gradient 0 (SEAL-0) → 4 (SEAL-4) conforme au tableau SF SOVEREIGNTY EFFECTIVE ASSURANCE LEVELS.
+          </div>
+        </div>
+        <div class="legend-area">
+          <app-seal-legend [active]="assessment.globalSeal.level"></app-seal-legend>
+
+          <div class="dim-summary">
+            <h4>Résumé par Dimension</h4>
+            <div class="dim-row" *ngFor="let score of assessment.scores; let i = index">
+              <span class="dim-code" [style.background-color]="score.sealLevel.color">
+                {{ score.dimensionCode }}
+              </span>
+              <div class="dim-bar-wrap">
+                <div class="dim-label">{{ getDimLabel(i) }}</div>
+                <div class="dim-bar">
+                  <div class="dim-fill"
+                       [style.width.%]="score.score / 4 * 100"
+                       [style.background-color]="score.sealLevel.color">
+                  </div>
+                </div>
+              </div>
+              <span class="dim-score" [style.color]="score.sealLevel.color">{{ score.score }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab: Table -->
+    <div class="tab-content" *ngIf="activeTab === 'table'">
+      <app-dimension-table [assessment]="assessment"></app-dimension-table>
+    </div>
+
+  </section>
+
+  <!-- ── Empty state ───────────────────────────────────────── -->
+  <section class="empty-state" *ngIf="!assessment">
+    <div class="empty-icon">🔍</div>
+    <h3>Aucun produit sélectionné</h3>
+    <p>
+      Sélectionnez une catégorie et un produit IBM Technology 2026 ci-dessus
+      pour générer automatiquement son assessment IRN/CSF aligné sur le
+      <strong>Cloud Sovereignty Framework Européen</strong>.
+    </p>
+    <div class="empty-dimensions">
+      <div class="empty-dim" *ngFor="let d of getDimensions()">
+        <span class="empty-code">{{ d.code }}</span>
+        <span>{{ d.labelFr }}</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="app-footer">
+  <div>
+    Aligné sur l'<strong>Indice de Résilience Numérique (IRN)</strong> — Bercy Juillet 2025 &nbsp;|&nbsp;
+    <strong>Cloud Sovereignty Framework EU</strong> v1.2.1 — Octobre 2025 &nbsp;|&nbsp;
+    IBM Technology Catalogue 2026
+  </div>
+  <div class="footer-made">Made with IBM Bob</div>
+</footer>
