@@ -84,6 +84,7 @@ export const IBM_PRODUCTS: IbmProduct[] = [
   { id: 'datastage', name: 'IBM DataStage', category: 'Automation & Integration', subcategory: 'Data Integration', description: 'High-volume ETL and data integration platform for data warehousing and analytics.' },
   { id: 'sterling-oms', name: 'IBM Sterling Order Management', category: 'Automation & Integration', subcategory: 'Supply Chain', description: 'Omnichannel order management with real-time inventory and fulfilment orchestration.' },
   { id: 'sterling-b2b', name: 'IBM Sterling B2B Integrator', category: 'Automation & Integration', subcategory: 'B2B Integration', description: 'EDI and B2B integration platform for trading partner connectivity.' },
+  { id: 'sovereign-core', name: 'IBM Sovereign Core', category: 'Automation & Integration', subcategory: 'Sovereign Cloud', description: 'Sovereign cloud automation platform enabling full digital sovereignty — data residency, encryption key ownership, and operational autonomy — for regulated industries and government workloads.' },
 
   // ── Data & Analytics ───────────────────────────────────────────────────
   { id: 'db2', name: 'IBM Db2', category: 'Data & Analytics', subcategory: 'Relational Database', description: 'Enterprise relational database for OLTP and analytics with built-in AI capabilities.' },

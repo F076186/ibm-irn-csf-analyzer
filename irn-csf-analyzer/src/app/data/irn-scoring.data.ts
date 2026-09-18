@@ -787,6 +787,21 @@ export const PRODUCT_SCORES: Record<string, ProductScoreEntry> = {
       'RES-8': 'Efficient cluster lifecycle management; hibernation policy for non-production cost/energy.',
     },
   },
+
+  // ── IBM Sovereign Core ────────────────────────────────────────────────────
+  'sovereign-core': {
+    scores: { 'RES-1':3,'RES-2':3,'RES-3':4,'RES-4':4,'RES-5':3,'RES-6':4,'RES-7':4,'RES-8':3 },
+    rationale: {
+      'RES-1': 'Conçu pour les marchés souverains ; gouvernance opérationnelle sous contrôle EU possible via déploiement on-prem ; IBM US HQ reste le titulaire de la propriété intellectuelle.',
+      'RES-2': 'Déploiement on-prem ou cloud souverain EU éliminant l\'exposition directe au CLOUD Act américain ; contrats gouvernants les opérations soumis au droit EU ; conformité RGPD, NIS2, DORA intégrée.',
+      'RES-3': 'Contrôle exclusif des clés de chiffrement par le client (Keep Your Own Key) ; résidence des données garantie sur territoire EU ; aucune dépendance externe aux modèles de données non-EU ; chiffrement omniprésent.',
+      'RES-4': 'Conçu pour une autonomie opérationnelle complète des équipes EU ; portabilité maximale sur OpenShift ; support IBM EU ; documentation et runbooks souverains inclus ; pas de dépendance aux équipes US pour l\'exploitation.',
+      'RES-5': 'Basé sur la stack open source Red Hat / OpenShift (Apache 2.0 / GPL) ; SBOM publiée ; couche logicielle IBM commerciale au-dessus d\'une fondation open source auditée.',
+      'RES-6': 'APIs ouvertes Kubernetes-native ; interopérabilité avec tout écosystème EU ; standards ouverts (OpenAPI, OIDC, KMIP) ; aucun vendor lock-in au niveau du runtime ; compatible avec des alternatives EU.',
+      'RES-7': 'ISO 27001 ; FIPS 140-2 L4 via HPCS ; CC EAL évaluation en cours ; contrôles NIS2 & DORA natifs ; audit EU indépendant possible ; détection des menaces et réponse sous juridiction EU.',
+      'RES-8': 'Infrastructure consolidée réduisant l\'empreinte carbone ; data centres EU alimentés en énergie renouvelable ; engagement IBM net-zéro 2030 ; Power Management et auto-scaling pour optimiser la consommation énergétique.',
+    },
+  },
 };
 
 /**
