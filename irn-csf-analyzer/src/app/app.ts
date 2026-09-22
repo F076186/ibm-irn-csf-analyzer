@@ -2,7 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IbmProduct, getAllCategories, IbmCategory } from './data/ibm-products.data';
-import { ProductAssessment, IRN_DIMENSIONS, IrnDimension } from './models/irn-csf.model';
+import {
+  ProductAssessment,
+  IRN_DIMENSIONS,
+  IrnDimension,
+  LandingZone,
+  LANDING_ZONES
+} from './models/irn-csf.model';
 import { AssessmentService } from './services/assessment.service';
 import { SpiderChartComponent } from './components/spider-chart/spider-chart.component';
 import { SealLegendComponent } from './components/seal-legend/seal-legend.component';
@@ -21,6 +27,10 @@ export class App implements OnInit {
   categories: IbmCategory[] = [];
   selectedCategoryName: string = '';
   selectedProduct: IbmProduct | null = null;
+  
+  landingZones: LandingZone[] = [];
+  selectedLandingZone: LandingZone | null = null;
+
   assessment: ProductAssessment | null = null;
   activeTab: 'chart' | 'table' = 'chart';
 
@@ -33,6 +43,8 @@ export class App implements OnInit {
 
   ngOnInit(): void {
     this.categories = getAllCategories();
+    this.landingZones = this.svc.getLandingZones();
+    this.selectedLandingZone = this.svc.getDefaultLandingZone();
   }
 
   onCategoryChange(): void {
@@ -41,8 +53,18 @@ export class App implements OnInit {
   }
 
   onProductChange(): void {
-    if (this.selectedProduct) {
-      this.assessment = this.svc.assess(this.selectedProduct);
+    this.recalculateAssessment();
+  }
+
+  onLandingZoneChange(): void {
+    this.recalculateAssessment();
+  }
+
+  private recalculateAssessment(): void {
+    if (this.selectedProduct && this.selectedLandingZone) {
+      this.assessment = this.svc.assess(this.selectedProduct, this.selectedLandingZone);
+    } else {
+      this.assessment = null;
     }
   }
 
@@ -60,6 +82,10 @@ export class App implements OnInit {
   }
 
   compareById(a: IbmProduct | null, b: IbmProduct | null): boolean {
+    return a?.id === b?.id;
+  }
+
+  compareLzById(a: LandingZone | null, b: LandingZone | null): boolean {
     return a?.id === b?.id;
   }
 }

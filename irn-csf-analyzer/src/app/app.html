@@ -27,16 +27,15 @@
 
   <!-- ── Selector Panel ─────────────────────────────────────── -->
   <section class="selector-panel">
-    <h2>Sélectionner un Produit IBM Technology 2026</h2>
+    <h2>Configuration de l'Évaluation : Produit IBM & Zone d'Atterrissage (Landing Zone)</h2>
     <p class="selector-hint">
-      Choisissez une catégorie puis un produit pour générer automatiquement son assessment IRN/CSF
-      sur les 8 dimensions de l'Indice de Résilience Numérique.
+      Sélectionnez un produit IBM Technology 2026 et sa zone d'atterrissage (On-Premises, IBM Cloud, Hyperscaler, Clouds souverains SecNumCloud / Européens : S3NS, Bleu, OVHcloud, Scaleway, Cloud Temple, NumSpot, etc.) pour évaluer son positionnement sur les 8 dimensions de l'Indice de Résilience Numérique (IRN) et du Cloud Sovereignty Framework (CSF).
     </p>
 
     <div class="selector-row">
       <!-- Category dropdown -->
       <div class="select-group">
-        <label for="catSelect">Catégorie de produit</label>
+        <label for="catSelect">1. Catégorie de produit</label>
         <select id="catSelect" [(ngModel)]="selectedCategoryName" (change)="onCategoryChange()">
           <option value="">-- Sélectionner une catégorie --</option>
           <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
@@ -45,7 +44,7 @@
 
       <!-- Product dropdown -->
       <div class="select-group" [class.disabled]="!selectedCategoryName">
-        <label for="prodSelect">Produit</label>
+        <label for="prodSelect">2. Produit IBM Technology</label>
         <select id="prodSelect" [(ngModel)]="selectedProduct"
                 (change)="onProductChange()"
                 [disabled]="!selectedCategoryName"
@@ -54,15 +53,42 @@
           <option *ngFor="let p of productsInCategory" [ngValue]="p">{{ p.name }}</option>
         </select>
       </div>
+
+      <!-- Landing Zone dropdown -->
+      <div class="select-group lz-select-group">
+        <label for="lzSelect">3. Zone d'Atterrissage (Landing Zone)</label>
+        <select id="lzSelect" [(ngModel)]="selectedLandingZone"
+                (change)="onLandingZoneChange()"
+                [compareWith]="compareLzById">
+          <option *ngFor="let lz of landingZones" [ngValue]="lz">
+            {{ lz.name }} {{ lz.secNumCloud ? '🛡️ (SecNumCloud)' : '' }}
+          </option>
+        </select>
+      </div>
     </div>
 
-    <!-- Product info card -->
-    <div class="product-info" *ngIf="selectedProduct">
-      <div class="product-icon">{{ selectedProduct.category[0] }}</div>
-      <div>
-        <strong>{{ selectedProduct.name }}</strong>
-        <p>{{ selectedProduct.subcategory }} · {{ selectedProduct.category }}</p>
-        <p class="product-desc">{{ selectedProduct.description }}</p>
+    <!-- Configuration info cards -->
+    <div class="info-cards-grid" *ngIf="selectedProduct || selectedLandingZone">
+      <!-- Product info card -->
+      <div class="product-info" *ngIf="selectedProduct">
+        <div class="product-icon">{{ selectedProduct.category[0] }}</div>
+        <div>
+          <strong>{{ selectedProduct.name }}</strong>
+          <p class="product-subtitle">{{ selectedProduct.subcategory }} · {{ selectedProduct.category }}</p>
+          <p class="product-desc">{{ selectedProduct.description }}</p>
+        </div>
+      </div>
+
+      <!-- Landing Zone info card -->
+      <div class="lz-info" *ngIf="selectedLandingZone">
+        <div class="lz-header">
+          <span class="lz-badge" [class.secnum]="selectedLandingZone.secNumCloud">
+            {{ selectedLandingZone.category }}
+          </span>
+          <span class="secnum-tag" *ngIf="selectedLandingZone.secNumCloud">🛡️ ANSSI SecNumCloud</span>
+          <span class="jurisdiction-tag">⚖️ {{ selectedLandingZone.jurisdiction }}</span>
+        </div>
+        <p class="lz-desc">{{ selectedLandingZone.description }}</p>
       </div>
     </div>
   </section>
@@ -95,6 +121,10 @@
       <div class="global-product-name">
         <strong>{{ assessment.productName }}</strong>
         <span>{{ assessment.category }}</span>
+        <div class="landing-zone-tag">
+          <span>📍 Zone d'atterrissage : <strong>{{ assessment.landingZone.name }}</strong></span>
+          <span class="secnum-badge" *ngIf="assessment.landingZone.secNumCloud">SecNumCloud</span>
+        </div>
       </div>
     </div>
 

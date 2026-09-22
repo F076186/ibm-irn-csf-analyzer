@@ -63,6 +63,7 @@ export class SpiderChartComponent implements OnChanges, AfterViewInit, OnDestroy
 
     const labels = IRN_DIMENSIONS.map(d => `${d.code}\n${d.labelFr}`);
     const values = this.assessment.scores.map(s => s.score);
+    const baseValues = this.assessment.scores.map(s => s.baseScore);
     const sealColors = this.assessment.scores.map(s => s.sealLevel.color);
 
     const ctx = this.canvasRef.nativeElement.getContext('2d')!;
@@ -73,15 +74,27 @@ export class SpiderChartComponent implements OnChanges, AfterViewInit, OnDestroy
         labels,
         datasets: [
           {
-            label: this.assessment.productName,
+            label: `${this.assessment.productName} (Sur ${this.assessment.landingZone.name})`,
             data: values,
-            backgroundColor: 'rgba(59, 130, 212, 0.18)',
+            backgroundColor: 'rgba(59, 130, 212, 0.22)',
             borderColor: '#1d4ed8',
             borderWidth: 2.5,
             pointBackgroundColor: sealColors,
             pointBorderColor: sealColors,
             pointRadius: 6,
             pointHoverRadius: 8,
+          },
+          {
+            label: `${this.assessment.productName} (Profil Standard / Baseline)`,
+            data: baseValues,
+            backgroundColor: 'transparent',
+            borderColor: '#9ca3af',
+            borderWidth: 1.5,
+            borderDash: [5, 5],
+            pointBackgroundColor: '#9ca3af',
+            pointBorderColor: '#9ca3af',
+            pointRadius: 4,
+            pointHoverRadius: 6,
           },
         ],
       },

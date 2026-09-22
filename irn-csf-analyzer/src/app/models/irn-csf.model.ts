@@ -12,7 +12,7 @@ export const IRN_DIMENSIONS: IrnDimension[] = [
     code: 'RES-1', csfCode: 'SOV-1',
     labelFr: 'Résilience Stratégique',
     labelEn: 'Strategic Sovereignty',
-    weight: 15,
+    weight: 20,
     subdimensions: [
       'EU governance: Decision-making under EU jurisdiction',
       'Control stability: Protection against ownership/control changes',
@@ -66,7 +66,7 @@ export const IRN_DIMENSIONS: IrnDimension[] = [
     code: 'RES-5', csfCode: 'SOV-5',
     labelFr: 'Résilience Supply-Chain',
     labelEn: 'Supply Chain Sovereignty',
-    weight: 20,
+    weight: 10,
     subdimensions: [
       'Hardware sovereignty: Origin and manufacturing location of critical hardware',
       'Firmware control: Jurisdiction and provenance of embedded code and firmware',
@@ -92,7 +92,7 @@ export const IRN_DIMENSIONS: IrnDimension[] = [
     code: 'RES-7', csfCode: 'SOV-7',
     labelFr: 'Résilience Sécurité',
     labelEn: 'Security & Compliance Sovereignty',
-    weight: 10,
+    weight: 15,
     subdimensions: [
       'Certifications & compliance: Meets recognized EU/international standards',
       'EU regulatory alignment: Complies with GDPR, NIS2, DORA',
@@ -153,18 +153,149 @@ export const SEAL_LEVELS: SealLevel[] = [
   },
 ];
 
+export type LandingZoneType =
+  | 'on-premises'
+  | 'ibm-cloud'
+  | 'hyperscaler'
+  | 's3ns'
+  | 'bleu'
+  | 'ovh'
+  | 'scaleway'
+  | 'cloud-temple'
+  | 'numspot'
+  | 'local-csp';
+
+export interface LandingZone {
+  id: LandingZoneType;
+  name: string;
+  category: 'On-Premises' | 'IBM Cloud' | 'Hyperscaler (US)' | 'European Sovereign Cloud (SecNumCloud / EU CSP)' | 'Local CSP';
+  jurisdiction: 'EU (France / EU Law)' | 'Mixed (EU-hosted, US Cloud Act)' | 'Customer Premise (Full Customer Law)' | 'Global';
+  secNumCloud: boolean;
+  description: string;
+  dimensionModifiers?: Partial<Record<string, number>>; // Modifiers on RES-1 to RES-8
+  rationaleNote: string;
+}
+
+export const LANDING_ZONES: LandingZone[] = [
+  {
+    id: 'on-premises',
+    name: 'On-Premises / Private Cloud (Customer Data Center)',
+    category: 'On-Premises',
+    jurisdiction: 'Customer Premise (Full Customer Law)',
+    secNumCloud: false,
+    description: 'Infrastructure physically operated within customer premises/datacenters in EU. Full control over data, network, and operational procedures.',
+    dimensionModifiers: { 'RES-1': 1, 'RES-2': 1, 'RES-3': 1, 'RES-4': 1, 'RES-7': 1 },
+    rationaleNote: 'Customer retains physical custody, hardware security, encryption keys, and network isolation on EU territory under customer law.',
+  },
+  {
+    id: 'ibm-cloud',
+    name: 'IBM Cloud (EU Multizone Regions: Paris, Frankfurt, Madrid)',
+    category: 'IBM Cloud',
+    jurisdiction: 'Mixed (EU-hosted, US Cloud Act)',
+    secNumCloud: false,
+    description: 'IBM Cloud public enterprise cloud with dedicated EU MZRs, EU Data Shield, Hyper Protect Crypto Services (FIPS 140-2 L4) and Financial Services Cloud controls.',
+    dimensionModifiers: { 'RES-1': 0, 'RES-2': 0, 'RES-3': 0, 'RES-4': 0, 'RES-7': 0 },
+    rationaleNote: 'EU-hosted multizone region with enterprise security controls, KYOK encryption via HPCS, under standard IBM Cloud DPA and SCCs.',
+  },
+  {
+    id: 'hyperscaler',
+    name: 'Hyperscalers (AWS, Azure, Google Cloud EU Regions)',
+    category: 'Hyperscaler (US)',
+    jurisdiction: 'Mixed (EU-hosted, US Cloud Act)',
+    secNumCloud: false,
+    description: 'US Hyperscaler public cloud infrastructure deployed in European regions. Subject to US extraterritorial jurisdiction (CLOUD Act / FISA 702).',
+    dimensionModifiers: { 'RES-1': -1, 'RES-2': -1, 'RES-3': 0, 'RES-4': -1, 'RES-5': -1 },
+    rationaleNote: 'Foreign infrastructure provider creates legal exposure to extraterritorial warrants, requiring technical mitigations like confidential computing.',
+  },
+  {
+    id: 's3ns',
+    name: 'S3NS (Google Cloud powered by Thales - SecNumCloud)',
+    category: 'European Sovereign Cloud (SecNumCloud / EU CSP)',
+    jurisdiction: 'EU (France / EU Law)',
+    secNumCloud: true,
+    description: 'French sovereign cloud alliance between Thales (majority capital) and Google Cloud, operated by EU personnel with SecNumCloud qualification.',
+    dimensionModifiers: { 'RES-1': 1, 'RES-2': 2, 'RES-3': 1, 'RES-4': 1, 'RES-7': 1 },
+    rationaleNote: 'French majority-owned legal entity, operated exclusively by EU cleared staff, French jurisdiction, insulated from CLOUD Act.',
+  },
+  {
+    id: 'bleu',
+    name: 'Bleu (Microsoft Azure powered by Capgemini & Orange - SecNumCloud)',
+    category: 'European Sovereign Cloud (SecNumCloud / EU CSP)',
+    jurisdiction: 'EU (France / EU Law)',
+    secNumCloud: true,
+    description: 'French sovereign cloud joint venture between Capgemini and Orange, running Microsoft Azure technology under exclusive French governance and SecNumCloud qualification.',
+    dimensionModifiers: { 'RES-1': 1, 'RES-2': 2, 'RES-3': 1, 'RES-4': 1, 'RES-7': 1 },
+    rationaleNote: 'Joint venture under 100% French ownership/governance, isolated autonomous operations, French jurisdiction.',
+  },
+  {
+    id: 'ovh',
+    name: 'OVHcloud (SecNumCloud Hosted Private Cloud & Public Cloud)',
+    category: 'European Sovereign Cloud (SecNumCloud / EU CSP)',
+    jurisdiction: 'EU (France / EU Law)',
+    secNumCloud: true,
+    description: '100% European cloud provider headquartered in France, SecNumCloud 3.2 qualified Hosted Private Cloud, custom server manufacturing in Europe.',
+    dimensionModifiers: { 'RES-1': 2, 'RES-2': 2, 'RES-3': 1, 'RES-4': 1, 'RES-5': 1, 'RES-7': 1, 'RES-8': 1 },
+    rationaleNote: 'Pure European sovereignty stack: EU equity, EU hardware manufacturing, ANSSI SecNumCloud qualification, zero extraterritorial exposure.',
+  },
+  {
+    id: 'scaleway',
+    name: 'Scaleway (European Multi-AZ Public Cloud)',
+    category: 'European Sovereign Cloud (SecNumCloud / EU CSP)',
+    jurisdiction: 'EU (France / EU Law)',
+    secNumCloud: false,
+    description: 'French multi-AZ cloud provider (Iliad Group) offering sovereign computing, Kubernetes (Kapsule), AI clusters and EU-only data processing.',
+    dimensionModifiers: { 'RES-1': 2, 'RES-2': 2, 'RES-3': 1, 'RES-4': 1, 'RES-7': 0, 'RES-8': 1 },
+    rationaleNote: 'European company and datacenter footprint, 100% GDPR aligned with no US parent dependency.',
+  },
+  {
+    id: 'cloud-temple',
+    name: 'Cloud Temple (SecNumCloud IaaS & PaaS)',
+    category: 'European Sovereign Cloud (SecNumCloud / EU CSP)',
+    jurisdiction: 'EU (France / EU Law)',
+    secNumCloud: true,
+    description: 'French sovereign cloud provider with ANSSI SecNumCloud qualification for IaaS and OpenShift PaaS, designed for critical financial and public workloads.',
+    dimensionModifiers: { 'RES-1': 2, 'RES-2': 2, 'RES-3': 1, 'RES-4': 1, 'RES-7': 1 },
+    rationaleNote: 'SecNumCloud qualified OpenShift platform, 100% French operations and sovereign governance.',
+  },
+  {
+    id: 'numspot',
+    name: 'NumSpot (Sovereign Cloud: Docaposte, Banque des Territoires, Naval Group, Dassault)',
+    category: 'European Sovereign Cloud (SecNumCloud / EU CSP)',
+    jurisdiction: 'EU (France / EU Law)',
+    secNumCloud: true,
+    description: 'Sovereign cloud consortium founded by Docaposte, Banque des Territoires, Naval Group, and Dassault Systèmes for public sector and regulated industries.',
+    dimensionModifiers: { 'RES-1': 2, 'RES-2': 2, 'RES-3': 1, 'RES-4': 1, 'RES-7': 1 },
+    rationaleNote: 'French institutional and defence industrial governance, targeting SecNumCloud with full EU sovereignty assurance.',
+  },
+  {
+    id: 'local-csp',
+    name: 'Local EU CSP (Regional Cloud Service Provider)',
+    category: 'Local CSP',
+    jurisdiction: 'EU (France / EU Law)',
+    secNumCloud: false,
+    description: 'Regional European cloud service providers (e.g., Exoscale, Hetzner, Outscale, Clever Cloud, etc.) operating under local national and EU jurisdiction.',
+    dimensionModifiers: { 'RES-1': 1, 'RES-2': 1, 'RES-3': 1, 'RES-4': 1, 'RES-7': 0 },
+    rationaleNote: 'EU-domiciled regional operator ensuring local data residency and EU jurisdiction.',
+  },
+];
+
 export interface IrnScore {
   dimensionCode: string;
   score: number; // 0-4
+  baseScore: number;
   sealLevel: SealLevel;
   rationale: string;
+  landingZoneImpact?: string;
 }
 
 export interface ProductAssessment {
   productId: string;
   productName: string;
   category: string;
+  landingZone: LandingZone;
   scores: IrnScore[];
   globalScore: number;
   globalSeal: SealLevel;
+  baseGlobalScore: number;
+  baseGlobalSeal: SealLevel;
 }
