@@ -1,0 +1,9 @@
+{
+  "name": "ibm-irn-csf-analyzer-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Minimal HTTP server for IBM IRN/CSF Analyzer",
+  "dependencies": {
+    "serve": "^14.2.4"
+  }
+}
