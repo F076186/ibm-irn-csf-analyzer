@@ -279,6 +279,26 @@ export const LANDING_ZONES: LandingZone[] = [
   },
 ];
 
+export interface RagEvidence {
+  dimensionCode: string;
+  detectedKeywords: string[];
+  matchedSnippets: string[];
+  confidence: 'High' | 'Medium' | 'Low' | 'Default';
+  suggestedLevel: number; // 0-4
+}
+
+export interface DocumentRagAnalysis {
+  fileName: string;
+  fileSize: number;
+  extractedTextLength: number;
+  detectedProductName?: string;
+  detectedCategory?: string;
+  detectedProvider?: string;
+  evidences: Record<string, RagEvidence>;
+  summary: string;
+  rawExcerpt: string;
+}
+
 export interface IrnScore {
   dimensionCode: string;
   score: number; // 0-4
@@ -286,12 +306,15 @@ export interface IrnScore {
   sealLevel: SealLevel;
   rationale: string;
   landingZoneImpact?: string;
+  ragEvidence?: RagEvidence;
 }
 
 export interface ProductAssessment {
   productId: string;
   productName: string;
   category: string;
+  sourceMode?: 'catalogue' | 'rag';
+  ragAnalysis?: DocumentRagAnalysis;
   landingZone: LandingZone;
   scores: IrnScore[];
   globalScore: number;

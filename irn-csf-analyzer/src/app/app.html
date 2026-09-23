@@ -25,57 +25,145 @@
 
 <main class="app-main">
 
+  <!-- ── Source Mode Toggle ────────────────────────────────────── -->
+  <section class="mode-toggle-section">
+    <div class="mode-toggle-bar">
+      <button class="mode-btn" [class.active]="assessmentMode === 'catalogue'" (click)="setAssessmentMode('catalogue')">
+        📦 Catalogue IBM Technology 2026
+      </button>
+      <button class="mode-btn" [class.active]="assessmentMode === 'rag'" (click)="setAssessmentMode('rag')">
+        📄 Analyse Documentaire RAG à la demande
+      </button>
+    </div>
+  </section>
+
   <!-- ── Selector Panel ─────────────────────────────────────── -->
   <section class="selector-panel">
-    <h2>Configuration de l'Évaluation : Produit IBM & Zone d'Atterrissage (Landing Zone)</h2>
-    <p class="selector-hint">
-      Sélectionnez un produit IBM Technology 2026 et sa zone d'atterrissage (On-Premises, IBM Cloud, Hyperscaler, Clouds souverains SecNumCloud / Européens : S3NS, Bleu, OVHcloud, Scaleway, Cloud Temple, NumSpot, etc.) pour évaluer son positionnement sur les 8 dimensions de l'Indice de Résilience Numérique (IRN) et du Cloud Sovereignty Framework (CSF).
-    </p>
+    
+    <!-- Mode 1: IBM Catalogue Mode -->
+    <div *ngIf="assessmentMode === 'catalogue'">
+      <h2>Évaluation depuis le Catalogue IBM Technology 2026</h2>
+      <p class="selector-hint">
+        Sélectionnez un produit IBM Technology 2026 et sa zone d'atterrissage (On-Premises, IBM Cloud, Hyperscaler, Clouds souverains SecNumCloud / Européens : S3NS, Bleu, OVHcloud, Scaleway, Cloud Temple, NumSpot, etc.) pour évaluer son positionnement sur les 8 dimensions de l'Indice de Résilience Numérique (IRN) et du Cloud Sovereignty Framework (CSF).
+      </p>
 
-    <div class="selector-row">
-      <!-- Category dropdown -->
-      <div class="select-group">
-        <label for="catSelect">1. Catégorie de produit</label>
-        <select id="catSelect" [(ngModel)]="selectedCategoryName" (change)="onCategoryChange()">
-          <option value="">-- Sélectionner une catégorie --</option>
-          <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
-        </select>
+      <div class="selector-row">
+        <!-- Category dropdown -->
+        <div class="select-group">
+          <label for="catSelect">1. Catégorie de produit</label>
+          <select id="catSelect" [(ngModel)]="selectedCategoryName" (change)="onCategoryChange()">
+            <option value="">-- Sélectionner une catégorie --</option>
+            <option *ngFor="let cat of categories" [value]="cat.name">{{ cat.name }}</option>
+          </select>
+        </div>
+
+        <!-- Product dropdown -->
+        <div class="select-group" [class.disabled]="!selectedCategoryName">
+          <label for="prodSelect">2. Produit IBM Technology</label>
+          <select id="prodSelect" [(ngModel)]="selectedProduct"
+                  (change)="onProductChange()"
+                  [disabled]="!selectedCategoryName"
+                  [compareWith]="compareById">
+            <option [ngValue]="null">-- Sélectionner un produit --</option>
+            <option *ngFor="let p of productsInCategory" [ngValue]="p">{{ p.name }}</option>
+          </select>
+        </div>
+
+        <!-- Landing Zone dropdown -->
+        <div class="select-group lz-select-group">
+          <label for="lzSelect">3. Zone d'Atterrissage (Landing Zone)</label>
+          <select id="lzSelect" [(ngModel)]="selectedLandingZone"
+                  (change)="onLandingZoneChange()"
+                  [compareWith]="compareLzById">
+            <option *ngFor="let lz of landingZones" [ngValue]="lz">
+              {{ lz.name }} {{ lz.secNumCloud ? '🛡️ (SecNumCloud)' : '' }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mode 2: Document RAG Upload Mode -->
+    <div *ngIf="assessmentMode === 'rag'">
+      <div class="rag-header-flex">
+        <div>
+          <h2>Analyse Souveraineté par RAG (Retrieval-Augmented Generation)</h2>
+          <p class="selector-hint">
+            Téléversez un document technique, contrat, architecture ou fiche produit (PDF, Word, Markdown, Texte, JSON) pour extraire et analyser automatiquement son niveau de conformité sur les 8 dimensions IRN & CSF.
+          </p>
+        </div>
+        <div class="sample-actions">
+          <span class="sample-label">Exemples préchargés :</span>
+          <button class="sample-btn" (click)="loadSampleDocument('watsonx')">🤖 watsonx + SecNumCloud</button>
+          <button class="sample-btn" (click)="loadSampleDocument('ovh')">🇫🇷 OVHcloud SecNumCloud</button>
+          <button class="sample-btn" (click)="loadSampleDocument('us-cloud')">☁️ SaaS Hyperscaler US</button>
+        </div>
       </div>
 
-      <!-- Product dropdown -->
-      <div class="select-group" [class.disabled]="!selectedCategoryName">
-        <label for="prodSelect">2. Produit IBM Technology</label>
-        <select id="prodSelect" [(ngModel)]="selectedProduct"
-                (change)="onProductChange()"
-                [disabled]="!selectedCategoryName"
-                [compareWith]="compareById">
-          <option [ngValue]="null">-- Sélectionner un produit --</option>
-          <option *ngFor="let p of productsInCategory" [ngValue]="p">{{ p.name }}</option>
-        </select>
+      <!-- Upload Dropzone -->
+      <div class="upload-dropzone"
+           [class.dragging]="isDragging"
+           (dragover)="onDragOver($event)"
+           (dragleave)="onDragLeave($event)"
+           (drop)="onDrop($event)"
+           (click)="fileInput.click()">
+        <input #fileInput type="file" (change)="onFileInput($event)" style="display: none" accept=".txt,.md,.pdf,.doc,.docx,.json,.csv,.yaml,.yml">
+        
+        <div class="dropzone-content">
+          <div class="dropzone-icon">📁</div>
+          <div class="dropzone-text">
+            <strong>Glissez-déposez votre document ici</strong> ou <span>cliquez pour parcourir</span>
+          </div>
+          <div class="dropzone-formats">
+            Formats pris en charge : <code>.pdf</code>, <code>.docx</code>, <code>.md</code>, <code>.txt</code>, <code>.json</code>, <code>.yaml</code>
+          </div>
+        </div>
       </div>
 
-      <!-- Landing Zone dropdown -->
-      <div class="select-group lz-select-group">
-        <label for="lzSelect">3. Zone d'Atterrissage (Landing Zone)</label>
-        <select id="lzSelect" [(ngModel)]="selectedLandingZone"
-                (change)="onLandingZoneChange()"
-                [compareWith]="compareLzById">
-          <option *ngFor="let lz of landingZones" [ngValue]="lz">
-            {{ lz.name }} {{ lz.secNumCloud ? '🛡️ (SecNumCloud)' : '' }}
-          </option>
-        </select>
+      <!-- Landing Zone selector in RAG Mode -->
+      <div class="selector-row rag-lz-row">
+        <div class="select-group lz-select-group full-width">
+          <label for="lzSelectRag">Zone d'Atterrissage cible pour l'analyse du document (Landing Zone)</label>
+          <select id="lzSelectRag" [(ngModel)]="selectedLandingZone"
+                  (change)="onLandingZoneChange()"
+                  [compareWith]="compareLzById">
+            <option *ngFor="let lz of landingZones" [ngValue]="lz">
+              {{ lz.name }} {{ lz.secNumCloud ? '🛡️ (SecNumCloud)' : '' }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Uploaded Document Bar -->
+      <div class="uploaded-doc-bar" *ngIf="ragAnalysis">
+        <div class="doc-icon">📄</div>
+        <div class="doc-details">
+          <strong>{{ ragAnalysis.fileName }}</strong>
+          <span>{{ ragAnalysis.extractedTextLength }} caractères analysés · Fournisseur détecté : <strong>{{ ragAnalysis.detectedProvider }}</strong></span>
+        </div>
+        <button class="btn-clear-doc" (click)="clearUploadedDocument()" title="Retirer le document">✕ Retirer</button>
       </div>
     </div>
 
     <!-- Configuration info cards -->
-    <div class="info-cards-grid" *ngIf="selectedProduct || selectedLandingZone">
-      <!-- Product info card -->
-      <div class="product-info" *ngIf="selectedProduct">
+    <div class="info-cards-grid" *ngIf="selectedProduct || selectedLandingZone || ragAnalysis">
+      <!-- Product info card (Catalogue) -->
+      <div class="product-info" *ngIf="assessmentMode === 'catalogue' && selectedProduct">
         <div class="product-icon">{{ selectedProduct.category[0] }}</div>
         <div>
           <strong>{{ selectedProduct.name }}</strong>
           <p class="product-subtitle">{{ selectedProduct.subcategory }} · {{ selectedProduct.category }}</p>
           <p class="product-desc">{{ selectedProduct.description }}</p>
+        </div>
+      </div>
+
+      <!-- Document info card (RAG) -->
+      <div class="product-info rag-doc-card" *ngIf="assessmentMode === 'rag' && ragAnalysis">
+        <div class="product-icon rag-icon">📄</div>
+        <div>
+          <strong>{{ ragAnalysis.detectedProductName }}</strong>
+          <p class="product-subtitle">{{ ragAnalysis.detectedCategory }} · {{ ragAnalysis.detectedProvider }}</p>
+          <p class="product-desc">{{ ragAnalysis.summary }}</p>
         </div>
       </div>
 
@@ -136,6 +224,9 @@
       <button [class.active]="activeTab === 'table'" (click)="activeTab = 'table'">
         📊 Détail des Dimensions
       </button>
+      <button *ngIf="assessment.ragAnalysis" [class.active]="activeTab === 'rag-evidence'" (click)="activeTab = 'rag-evidence'">
+        🔍 Preuves & Extraits RAG Détectés ({{ assessment.ragAnalysis.fileName }})
+      </button>
     </div>
 
     <!-- Tab: Spider Chart -->
@@ -180,6 +271,45 @@
     <!-- Tab: Table -->
     <div class="tab-content" *ngIf="activeTab === 'table'">
       <app-dimension-table [assessment]="assessment"></app-dimension-table>
+    </div>
+
+    <!-- Tab: RAG Evidence & Extracted Quotes -->
+    <div class="tab-content" *ngIf="activeTab === 'rag-evidence' && assessment.ragAnalysis">
+      <div class="rag-evidence-container">
+        <div class="rag-evidence-header">
+          <h3>Preuves Textuelles et Mots-Clés Détectés par le Moteur RAG</h3>
+          <p>Le moteur d'inférence documentaire a parcouru le document « {{ assessment.ragAnalysis.fileName }} » et a relevé les éléments factuels suivants pour chaque dimension :</p>
+        </div>
+
+        <div class="rag-cards-grid">
+          <div class="rag-card" *ngFor="let score of assessment.scores; let i = index">
+            <div class="rag-card-top">
+              <span class="dim-code" [style.background-color]="score.sealLevel.color">
+                {{ score.dimensionCode }} · {{ dimensions[i]?.csfCode }}
+              </span>
+              <span class="confidence-tag" [class.high]="score.ragEvidence?.confidence === 'High'" [class.medium]="score.ragEvidence?.confidence === 'Medium'">
+                Confiance : {{ score.ragEvidence?.confidence || 'Standard' }}
+              </span>
+            </div>
+            <h4>{{ dimensions[i]?.labelFr }}</h4>
+
+            <!-- Detected keywords -->
+            <div class="keywords-list" *ngIf="score.ragEvidence && score.ragEvidence.detectedKeywords.length > 0">
+              <span class="kw-tag" *ngFor="let kw of score.ragEvidence.detectedKeywords">🏷️ {{ kw }}</span>
+            </div>
+
+            <!-- Matched snippets -->
+            <div class="snippets-container" *ngIf="score.ragEvidence && score.ragEvidence.matchedSnippets.length > 0; else noSnippets">
+              <div class="snippet-quote" *ngFor="let snip of score.ragEvidence.matchedSnippets">
+                « {{ snip }} »
+              </div>
+            </div>
+            <ng-template #noSnippets>
+              <div class="no-snippet-text">Aucune clause explicite repérée dans le texte pour cette dimension. Évaluation déduite par défaut.</div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
     </div>
 
   </section>
