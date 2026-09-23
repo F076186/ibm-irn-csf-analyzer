@@ -62,7 +62,7 @@ The **IBM IRN / CSF Sovereignty Analyzer** helps architects, compliance officers
 ## 🚀 Key Features
 
 ### Mode 1: Curated IBM Technology 2026 Catalogue
-- Comprehensive catalogue spanning **AI & Data Platforms** (*watsonx.ai, watsonx.data, watsonx.governance, watsonx Orchestrate, Cloud Pak for Data*), **Hybrid Cloud & Infrastructure** (*Red Hat OpenShift, RHEL, IBM Power, IBM z16, FlashSystem*), **Security** (*QRadar SIEM/SOAR, Guardium, Hyper Protect Crypto Services*), **Automation & Integration** (*Cloud Pak for Integration, MQ, API Connect, DataStage, Sovereign Core*), and more.
+- Comprehensive catalogue spanning **AI & Data Platforms** (*watsonx.ai, watsonx.data, watsonx.governance, watsonx Orchestrate, IBM Bob, Cloud Pak for Data*), **Hybrid Cloud & Infrastructure** (*Red Hat OpenShift, RHEL, IBM Power, IBM z16, FlashSystem*), **Security** (*QRadar SIEM/SOAR, Guardium, Hyper Protect Crypto Services*), **Automation & Integration** (*Cloud Pak for Integration, MQ, API Connect, DataStage, Sovereign Core*), and more.
 - Each entry includes pre-assessed base scores and detailed analytical rationales.
 
 ### Mode 2: On-Demand Document RAG Analyzer

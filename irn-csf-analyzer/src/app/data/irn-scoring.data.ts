@@ -98,6 +98,21 @@ export const PRODUCT_SCORES: Record<string, ProductScoreEntry> = {
     },
   },
 
+  // ── IBM Bob ─────────────────────────────────────────────────────────────
+  'ibm-bob': {
+    scores: { 'RES-1':2,'RES-2':2,'RES-3':2,'RES-4':2,'RES-5':3,'RES-6':3,'RES-7':3,'RES-8':2 },
+    rationale: {
+      'RES-1': 'IBM US corporate entity with dedicated enterprise compliance and European governance alignment under GDPR DPA.',
+      'RES-2': 'Subject to US CLOUD Act under standard SaaS routing; EU SCCs and strict enterprise IP confidentiality agreements applied.',
+      'RES-3': 'No customer code retention for model retraining; enterprise data residency options; supports private workspace isolation.',
+      'RES-4': 'Local IDE integration (VS Code, JetBrains, CLI); works on local repositories with granular approval modes; EU support channels.',
+      'RES-5': 'Open model ecosystem support (Granite Apache 2.0, open-source tooling); Model Context Protocol (MCP) tool integration.',
+      'RES-6': 'Standard Model Context Protocol (MCP) extensibility, open schemas, non-proprietary codebase execution protocols.',
+      'RES-7': 'Strict security boundaries with tool approval mechanisms, zero-retention code privacy, and enterprise access governance.',
+      'RES-8': 'Intelligent LLM task routing optimizes compute and model energy consumption across SDLC workflows.',
+    },
+  },
+
   // ── watsonx Code Assistant ───────────────────────────────────────────────
   'wx-code': {
     scores: { 'RES-1':2,'RES-2':2,'RES-3':2,'RES-4':2,'RES-5':2,'RES-6':3,'RES-7':3,'RES-8':2 },
