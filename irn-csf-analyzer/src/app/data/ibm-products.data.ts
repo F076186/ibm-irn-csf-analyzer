@@ -67,6 +67,7 @@ export const IBM_PRODUCTS: IbmProduct[] = [
   { id: 'ibm-secrets-manager', name: 'IBM Secrets Manager', category: 'Security', subcategory: 'Cryptography & Key Management', description: 'Secrets lifecycle management for API keys, certificates, and credentials.' },
   { id: 'trusteer', name: 'IBM Trusteer', category: 'Security', subcategory: 'Fraud Prevention', description: 'AI-powered fraud detection and digital identity trust for online banking.' },
   { id: 'isva', name: 'IBM Security Verify Bridge', category: 'Security', subcategory: 'Identity & Access Management', description: 'Bridges on-prem LDAP/AD with cloud identity services.' },
+  { id: 'verify-ig', name: 'IBM Verify Identity Governance', category: 'Security', subcategory: 'Identity & Access Management', description: 'Appliance-based Identity Governance & Administration (IGA) platform providing access certification, role lifecycle management, Segregation of Duties (SoD) enforcement, user provisioning, and risk-based access analytics for regulated enterprises.' },
   { id: 'zoltan', name: 'IBM Z Security & Compliance Center', category: 'Security', subcategory: 'Compliance Management', description: 'Compliance posture management for IBM Z workloads.' },
   { id: 'masq', name: 'IBM Security MASQ', category: 'Security', subcategory: 'Post-Quantum Cryptography', description: 'Post-quantum cryptography services for data-at-rest and data-in-transit.' },
 

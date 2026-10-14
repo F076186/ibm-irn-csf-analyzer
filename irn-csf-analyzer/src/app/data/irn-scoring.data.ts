@@ -473,6 +473,21 @@ export const PRODUCT_SCORES: Record<string, ProductScoreEntry> = {
     },
   },
 
+  // ── IBM Verify Identity Governance ──────────────────────────────────────
+  'verify-ig': {
+    scores: { 'RES-1':2,'RES-2':2,'RES-3':3,'RES-4':3,'RES-5':2,'RES-6':3,'RES-7':4,'RES-8':2 },
+    rationale: {
+      'RES-1': 'IBM US HQ; appliance-based IGA product widely deployed in EU government and banking; IP and strategic governance remain non-EU.',
+      'RES-2': 'Virtual appliance deploys fully on-premises (VMware, KVM, OpenStack, Hyper-V) — no mandatory cloud dependency; US CLOUD Act scope limited to IBM support channels and optional cloud-hosted licensing; GDPR DPA available.',
+      'RES-3': 'All identity governance data (users, entitlements, roles, audit logs, SoD policies) stored on-premises on customer-controlled infrastructure; no mandatory data exfiltration; customer manages encryption keys for the appliance storage layer.',
+      'RES-4': 'Self-operable on-prem virtual appliance with HA cluster support; full web-based administration console; EU IBM Security support; extensive IBM documentation and IBM Security Learning Academy training materials; broad EU skills availability.',
+      'RES-5': 'IBM commercial IGA software product; virtual appliance packaging reduces supply-chain surface vs. distributed install; limited open-source component transparency and SBOM disclosure; IBM-controlled appliance firmware and update lifecycle.',
+      'RES-6': 'RBAC and SCIM-aligned data model; REST API for integration; LDAP/Active Directory connectors using open directory protocols; Identity Brokerage adapter framework; OIDC/SAML for authentication federation; open workflow BPMN-style engine for access requests.',
+      'RES-7': 'Purpose-built for regulated compliance: access certification campaigns (NIS2, DORA, GDPR Art.25 data minimisation); SoD violation detection; risk scoring and mitigation workflow; full audit trail; PCI DSS and SOX compliance packs; ISO 27001 aligned controls; integrates with QRadar SIEM for identity-based threat correlation.',
+      'RES-8': 'Consolidated virtual appliance deployment on existing hypervisor infrastructure eliminates dedicated hardware; HA cluster model shares compute resources; IGA automation reduces manual joiner-mover-leaver processing, cutting administrative overhead.',
+    },
+  },
+
   // ── IBM Guardium Data Security Center ────────────────────────────────────
   'guardium-data': {
     scores: { 'RES-1':2,'RES-2':2,'RES-3':4,'RES-4':3,'RES-5':2,'RES-6':3,'RES-7':4,'RES-8':2 },
